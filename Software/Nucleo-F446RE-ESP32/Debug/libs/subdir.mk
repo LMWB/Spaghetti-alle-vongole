@@ -5,9 +5,9 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-/home/lukas/work/git/LMWB/noRTOS/Software/libs/multifunc.c \
-/home/lukas/work/git/LMWB/noRTOS/Software/libs/noRTOS.c \
-/home/lukas/work/git/LMWB/noRTOS/Software/libs/utils.c 
+/home/lukas/work/git/LMWB/Spaghetti-alle-vongole/Software/libs/multifunc.c \
+/home/lukas/work/git/LMWB/Spaghetti-alle-vongole/Software/libs/noRTOS.c \
+/home/lukas/work/git/LMWB/Spaghetti-alle-vongole/Software/libs/utils.c 
 
 OBJS += \
 ./libs/multifunc.o \
@@ -21,11 +21,11 @@ C_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-libs/multifunc.o: /home/lukas/work/git/LMWB/noRTOS/Software/libs/multifunc.c libs/subdir.mk
+libs/multifunc.o: /home/lukas/work/git/LMWB/Spaghetti-alle-vongole/Software/libs/multifunc.c libs/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../../libs -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
-libs/noRTOS.o: /home/lukas/work/git/LMWB/noRTOS/Software/libs/noRTOS.c libs/subdir.mk
+libs/noRTOS.o: /home/lukas/work/git/LMWB/Spaghetti-alle-vongole/Software/libs/noRTOS.c libs/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../../libs -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
-libs/utils.o: /home/lukas/work/git/LMWB/noRTOS/Software/libs/utils.c libs/subdir.mk
+libs/utils.o: /home/lukas/work/git/LMWB/Spaghetti-alle-vongole/Software/libs/utils.c libs/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../../libs -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 
 clean: clean-libs

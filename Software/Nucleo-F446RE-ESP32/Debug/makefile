@@ -61,8 +61,8 @@ all: main-build
 main-build: Nucleo-F446RE-ESP32.elf secondary-outputs
 
 # Tool invocations
-Nucleo-F446RE-ESP32.elf Nucleo-F446RE-ESP32.map: $(OBJS) $(USER_OBJS) /home/lukas/work/git/LMWB/noRTOS/Software/Nucleo-F446RE-ESP32/STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Nucleo-F446RE-ESP32.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/lukas/work/git/LMWB/noRTOS/Software/Nucleo-F446RE-ESP32/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Nucleo-F446RE-ESP32.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Nucleo-F446RE-ESP32.elf Nucleo-F446RE-ESP32.map: $(OBJS) $(USER_OBJS) /home/lukas/work/git/LMWB/Spaghetti-alle-vongole/Software/Nucleo-F446RE-ESP32/STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Nucleo-F446RE-ESP32.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/lukas/work/git/LMWB/Spaghetti-alle-vongole/Software/Nucleo-F446RE-ESP32/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Nucleo-F446RE-ESP32.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
