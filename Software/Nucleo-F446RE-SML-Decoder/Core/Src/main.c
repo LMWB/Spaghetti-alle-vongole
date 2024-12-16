@@ -13,6 +13,15 @@
   * in the root directory of this software component.
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
+  *
+  *
+  *
+  * UART1 and UART2 RX / TX Pins with pull down!
+  *
+  *
+  *
+  *
+  *
   ******************************************************************************
   */
 /* USER CODE END Header */
@@ -66,7 +75,7 @@ void SystemClock_Config(void);
 void noRTOS_setup(void) {
 	UART_INTERNET_READ_BYTE_IRQ( &uart1_rx_buffer[buffer_haed] );
 	UART_TERMINAL_READ_LINE_IRQ( uart2_rx_buffer, uart_rx_buffer_size);
-	printf("activate UART Read Byte\n");
+	printf("activate UART1 and UART1 in DMA Mode read line\n");
 }
 
 
