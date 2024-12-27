@@ -2,3 +2,237 @@ Example from 2024-12-15
 P = 257W
 1.8.0 = 5448kWh
 2.8.0 = 525kWh
+
+01 01                                                                   #Start Version 1.0 
+76                                                                      #Liste mit 6 Einträgen (1. SML Nachricht in diesem Telegramm) 
+    05 12 AC 01 3B                                                      #transactionId:
+    62 00                                                               #groupNo:
+    62 00                                                               #abortOnError:
+    72                                                                  #messageBody: Liste mit 2 Einträgen
+        63 01 01                                                        #getOpenResponse:
+        76                                                              #Liste mit 6 Einträgen
+            01                                                          #codepage: ohne Wert
+            07 FF FF FF FF FF FF                                        #clientId: ohne Wert
+            05 06 39 55 BF                                              #reqFileId:
+            0B 0A 01 45 46 52 20 02 CF 95 E0                            #serverID: (0b(HEX)=11Bytes Länge)
+            72 
+                62 01 
+                65 06 39 55 80 
+            01 
+        63 8B 73                                                        #CRC Prüfsumme der ersten Nahricht
+        00                                                              #Ende der ersten SML Nachricht
+76                                                                      #Liste mit 6 Einträgen (2. SML Nachricht in diesem Telegramm)
+    05 12 AC 01 3C 
+    62 00 
+    62 00 
+    72 
+        63 07 01 
+        77 
+            07 FF FF FF FF FF FF 
+            0B 0A 01 45 46 52 20 02 CF 95 E0 
+            07 01 00 62 0A FF FF 
+            72 
+                62 01 
+                65 06 39 55 80 
+            F1 06                                                   #Liste mit 22 Einträgen
+                77 
+                    07 01 00 60 32 01 01                            #OBIS Code 96.50.1 = Hardwareversion
+                    01 
+                    01 
+                    01 
+                    01 
+                    04 45 46 52 
+                    01 
+                77 
+                    07 01 00 60 01 00 FF                            #OBIS Code 96.1.0 = GeraeteID
+                    01 
+                    01 
+                    01 
+                    01 
+                    0B 0A 01 45 46 52 20 02 CF 95 E0 
+                    01 
+                77 
+                    07 01 00 01 08 00 FF                            #OBIS Code 1.8.0 = Gesamtenergie Bezug
+                    64 1C 00 04 
+                    72 
+                        62 01 
+                        65 06 39 55 80 
+                    62 1E                                           #unit: 1e = "Wh"
+                    52 FF                                           #scaler: ff(integer)=-1(dezimal) -> 10^-1 = 0.1
+                    65 03 3F 58 2C                                  #unit: Wert für Wirkenergie Bezug gesamt tariflos [0x03 3f 58 2c = 54482988 * 0.1 = 5448298.8 Wh = 5448.3kWh]
+                    01                                              #valueSignature: ohne Wert
+                77 
+                    07 01 00 02 08 00 FF                            #OBIS Code 2.8.0 = Gesamtenergie Generiert 
+                    01 
+                    72 
+                        62 01 
+                        65 06 39 55 80 
+                    62 1E 
+                    52 FF 
+                    64 50 3E 1C                                     #unit: Wert für Wirkenergie Generiert gesamt tariflos [0x50 3E 1C = 5258780 * 0.1 = 525878.0 Wh = 525.9kWh] 
+                    01 
+                77 
+                    07 01 00 10 07 00 FF                            #OBIS Code Momentane Wirkleistung 16.7.0
+                    01 
+                    01 
+                    62 1B                                           #unit: 1b = "W"
+                    52 00                                           #scaler: 0(integer)=0(dezimal) -> 10^0 = 1
+                    53 00 EA                                        #value: Wert für momentane Gesamtwirkleistung [0x00 EA = 234W]
+                    01 
+                77 
+                    07 01 00 20 07 00 FF                            #OBIS Code 32.7.0 = Spannung L1 
+                    01
+                    01 
+                    62 23 
+                    52 FF 
+                    63 09 00 
+                    01 
+                77 
+                    07 01 00 34 07 00 FF                            #OBIS Code 52.7.0 = Spannung L2
+                    01 
+                    01 
+                    62 23 
+                    52 FF 
+                    63 08 F5 
+                    01 
+                77 
+                    07 01 00 48 07 00 FF                            #OBIS Code 72.7.0 = Spannung L3
+                    01 
+                    01 
+                    62 23 
+                    52 FF 
+                    63 09 05 
+                    01 
+                77 
+                    07 01 00 1F 07 00 FF                            #OBIS Code 31.7.0 = Strom L1
+                    01 
+                    01 
+                    62 21 
+                    52 FE 
+                    62 3F 
+                    01 
+                77 
+                    07 01 00 33 07 00 FF                            #OBIS Code 51.7.0 = Strom L2
+                    01 
+                    01 
+                    62 21 
+                    52 FE 
+                    62 1B 
+                    01 
+                77 
+                    07 01 00 47 07 00 FF                            #OBIS Code 71.7.0 = Strom L3
+                    01 
+                    01 
+                    62 21 
+                    52 FE 
+                    62 36 
+                    01 
+                77 
+                    07 01 00 51 07 01 FF                            #OBIS Code 81.7.1 = Phasenwinkel 
+                    01 
+                    01 
+                    62 08 
+                    52 00 
+                    52 77 
+                    01 
+                77 
+                    07 01 00 51 07 02 FF                            #OBIS Code 81.7.2 = Phasenwinkel 
+                    01 
+                    01 
+                    62 08 
+                    52 00 
+                    53 00 EC 
+                    01 
+                77 
+                    07 01 00 51 07 04 FF                            #OBIS Code 81.7.4 = Phasenwinkel 
+                    01 
+                    01 
+                    62 08 
+                    52 00 
+                    53 01 4A 
+                    01 
+                77 
+                    07 01 00 51 07 0F FF                            #OBIS Code 81.7.15 = Phasenwinkel 
+                    01 
+                    01 
+                    62 08 
+                    52 00 
+                    53 01 56 
+                    01 
+                77 
+                    07 01 00 51 07 1A FF                            #OBIS Code 81.7.26 = Phasenwinkel 
+                    01 
+                    01 
+                    62 08 
+                    52 00 
+                    53 01 38 
+                    01 
+                77 
+                    07 01 00 0E 07 00 FF                            #OBIS Code 14.7.0 = Frequenz 
+                    01 
+                    01 
+                    62 2C 
+                    52 FF 
+                    63 01 F4 
+                    01 
+                77 
+                    07 01 00 00 02 00 00                            #OBIS Code 0.2.0 = Firmware Version 
+                    01 
+                    01 
+                    01 
+                    01 
+                    06 30 33 2E 30 30 
+                    01 
+                77 
+                    07 01 00 60 5A 02 01                            #OBIS Code 96.90.2. = Firmware Checksum
+                    01 
+                    01 
+                    01 
+                    01 
+                    03 42 BD 
+                    01 
+                77 
+                    07 01 00 61 61 00 00                            #OBIS Code 97.97.0 = Fehlerregister
+                    01 
+                    01 
+                    01 
+                    01 
+                    03 00 00 
+                    01 
+                77 
+                    07 01 00 60 32 01 04                            #OBIS Code 96.50.1 = Hardware Version
+                    01 
+                    01 
+                    01 
+                    01 
+                    08 50 31 2E 32 2E 31 32 
+                    01 
+                77                                                  #letztes Element der Liste mit 22 Einträgen 
+                    07 01 00 60 32 04 04                            #OBIS Code 96.50.4 = Parameter Version
+                    01 
+                    01 
+                    01 
+                    01 
+                    03 04 22 
+                    01 
+            01 
+            01 
+        63 D2 94                                                #CRC Prüfsumme der XX. SML Nachricht
+        00                                                      #Ende der XX. SML Nachricht 
+76 
+    05 12 AC 01 3D 
+    62 00 
+    62 00 
+    72 
+        63 02 01 
+        71 
+            01 
+    63 32 DA 
+    00 
+00 
+1B 1B 1B 1B 
+1A 01 37 D6 
+    
+    
+    
+    1B 1B 1B 1B 01 01 	 HIT 
