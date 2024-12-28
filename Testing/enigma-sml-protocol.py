@@ -35,13 +35,20 @@ def is_sml_message(l):
 
 def decode_sml_message_instantaneous_power(l):
     # 'l' will be of class string
-    key_power = '07 01 00 10 07 00 FF'
+    key_power = '77 07 01 00 10 07 00 FF'
     indexPower = l.find(key_power)
     power = 0
     if(indexPower != -1):
-        subMessage = l[indexPower:indexPower+100]
+        subMessage = l[indexPower:indexPower+100]       # 77 = List Object with 7 Elements
         array = parse_line_to_array(subMessage)
-        power = (array[14] << 8) | (array[15] << 0)
+        power = (array[15] << 8) | (array[16] << 0)
+        
+        p = 1
+        for i in range(7):
+            bytes_read = array[p] & 0x0f                # array[0] = 77, masking LSB Nibble
+            print(f'{array[p:p+bytes_read]}')
+            p += bytes_read
+            print(f'{bytes_read} {p}')
     return power
 
 def decode_sml_message_energie_consumption(l):
