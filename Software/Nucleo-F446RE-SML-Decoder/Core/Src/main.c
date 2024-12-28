@@ -16,7 +16,7 @@
   *
   *
   *
-  * UART1 and UART2 RX / TX Pins with pull down!
+  * UART1 and UART2 RX / TX Pins with pull up!
   *
   *
   *
@@ -37,9 +37,45 @@
 #include "hardwareGlobal.h"
 
 #define uart_rx_buffer_size 512
-static uint8_t uart2_rx_buffer[uart_rx_buffer_size];
-static uint8_t uart1_rx_buffer[uart_rx_buffer_size];
-static uint16_t buffer_haed = 0;
+static uint8_t uart_IR_rx_buffer[uart_rx_buffer_size];
+static uint8_t uart_terminal_rx_buffer[uart_rx_buffer_size];
+static uint16_t buffer_head = 0;
+
+bool sml_check_for_start_sequence(uint8_t *buffer) {
+	if (	buffer[buffer_head] == 0x01 && buffer[buffer_head - 1] == 0x01 &&
+			buffer[buffer_head - 2] == 0x1B && buffer[buffer_head - 3] == 0x1B) {
+		// start sequence detected
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void sml_read_char_callback(void){
+	// regular printf() does not work, it swallows chars!
+	char b[8];
+	uint8_t s = 0;
+	s = sprintf(b, "%02X ", uart_IR_rx_buffer[buffer_head]);
+	UART_SEND_TERMINAL((uint8_t*)b, s);
+
+	// check for SML-Protocol start sequence
+//	if( 	   uart_IR_rx_buffer[buffer_head] == 0x01
+//			&& uart_IR_rx_buffer[buffer_head-1] == 0x01
+//			&& uart_IR_rx_buffer[buffer_head-2] == 0x1B
+//			&& uart_IR_rx_buffer[buffer_head-3] == 0x1B){
+
+	if(sml_check_for_start_sequence(uart_IR_rx_buffer)){
+		// start sequence detected, start a new line on terminal
+		printf("\t HIT \n");
+	}
+
+	// increment pointer on char buffer
+	buffer_head++;
+	// prevent pointer from increase more than buffer length
+	buffer_head = buffer_head & 0x1FF;
+	// activate interrupt based, byte wise uart read
+	UART_IR_READ_BYTE_IRQ( &uart_IR_rx_buffer[buffer_head] );
+}
 
 /* USER CODE END Includes */
 
@@ -73,36 +109,21 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void noRTOS_setup(void) {
-	UART_INTERNET_READ_BYTE_IRQ( &uart1_rx_buffer[buffer_haed] );
-	UART_TERMINAL_READ_LINE_IRQ( uart2_rx_buffer, uart_rx_buffer_size);
-	printf("activate UART1 and UART1 in DMA Mode read line\n");
+	UART_IR_READ_BYTE_IRQ( &uart_IR_rx_buffer[buffer_head] );
+	printf("activate UART1 in read byte mode\n");
+	UART_TERMINAL_READ_LINE_IRQ( uart_terminal_rx_buffer, uart_rx_buffer_size);
+	printf("activate UART2 in DMA read line mode\n");
 }
 
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 
 	if (huart->Instance == UART_TERMINAL_INSTANCE){
-
+		__NOP();
 	}
 
-	if (huart->Instance == UART_INTERNET_INSTANCE){
-		//printf("received 1 byte raw data: %02X head at %d \n", uart1_rx_buffer[buffer_haed], buffer_haed);
-		char b[8];
-		uint8_t s = 0;
-		s = sprintf(b, "%02X ", uart1_rx_buffer[buffer_haed]);
-		UART_SEND_TERMINAL((uint8_t*)b, s);
-
-		if( 	   uart1_rx_buffer[buffer_haed] == 0x01
-				&& uart1_rx_buffer[buffer_haed-1] == 0x01
-				&& uart1_rx_buffer[buffer_haed-2] == 0x1B
-				&& uart1_rx_buffer[buffer_haed-3] == 0x1B){
-			printf("\t HIT \n");
-		}
-
-		buffer_haed++;
-		buffer_haed = buffer_haed & 0x1FF;
-
-		UART_INTERNET_READ_BYTE_IRQ( &uart1_rx_buffer[buffer_haed] );
+	if (huart->Instance == UART_IR_INSTANCE){
+		sml_read_char_callback();
 	}
 }
 
@@ -110,10 +131,10 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size){
 
 	if (huart->Instance == UART_TERMINAL_INSTANCE){
 		printf("---- NEW LINE ---- \n");
-		UART_TERMINAL_READ_LINE_IRQ(uart2_rx_buffer, uart_rx_buffer_size);
+		UART_TERMINAL_READ_LINE_IRQ(uart_terminal_rx_buffer, uart_rx_buffer_size);
 	}
 
-	if (huart->Instance == UART_INTERNET_INSTANCE){
+	if (huart->Instance == UART_IR_INSTANCE){
 		printf("received %d byte raw data\n", Size);
 	}
 }
@@ -164,8 +185,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  //printf("Hello from AT-Command Handler on ESP32\n");
-	  DELAY(500);
   }
   /* USER CODE END 3 */
 }

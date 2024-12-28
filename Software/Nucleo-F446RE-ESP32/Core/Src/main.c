@@ -65,7 +65,7 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void noRTOS_setup(void) {
-	UART_INTERNET_READ_BYTE_IRQ( &uart1_rx_buffer[buffer_haed] );
+	UART_IR_READ_BYTE_IRQ( &uart1_rx_buffer[buffer_haed] );
 	UART_TERMINAL_READ_LINE_IRQ( uart2_rx_buffer, uart_rx_buffer_size);
 	printf("activate UART Read Byte\n");
 }
@@ -77,7 +77,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 
 	}
 
-	if (huart->Instance == UART_INTERNET_INSTANCE){
+	if (huart->Instance == UART_IR_INSTANCE){
 		//printf("received 1 byte raw data: %02X head at %d \n", uart1_rx_buffer[buffer_haed], buffer_haed);
 		char b[8];
 		uint8_t s = 0;
@@ -94,7 +94,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 		buffer_haed++;
 		buffer_haed = buffer_haed & 0x1FF;
 
-		UART_INTERNET_READ_BYTE_IRQ( &uart1_rx_buffer[buffer_haed] );
+		UART_IR_READ_BYTE_IRQ( &uart1_rx_buffer[buffer_haed] );
 	}
 }
 
@@ -105,7 +105,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size){
 		UART_TERMINAL_READ_LINE_IRQ(uart2_rx_buffer, uart_rx_buffer_size);
 	}
 
-	if (huart->Instance == UART_INTERNET_INSTANCE){
+	if (huart->Instance == UART_IR_INSTANCE){
 		printf("received %d byte raw data\n", Size);
 	}
 }
