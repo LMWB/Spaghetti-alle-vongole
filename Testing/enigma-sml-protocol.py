@@ -35,8 +35,8 @@ def is_sml_message(l):
 
 def decode_sml_message_instantaneous_power(l):
     # 'l' will be of class string
-    key_power = '77 07 01 00 10 07 00 FF'
-    indexPower = l.find(key_power)
+    key_instantaneous_power = '77 07 01 00 10 07 00 FF'
+    indexPower = l.find(key_instantaneous_power)
     power = 0
     if(indexPower != -1):
         subMessage = l[indexPower:indexPower+100]       # 77 = List Object with 7 Elements
@@ -82,4 +82,6 @@ if( __name__ == "__main__"):
                 print(f'Energie Pos: {energie1/10000:.3f} kWh  Energie Neg: {energie2/10000:.3f} kWh power: {power} W')
 
     array = parse_line_to_array(line)
+    print(array)
+    print(len(array))
     print(f'end of script')

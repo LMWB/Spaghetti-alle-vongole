@@ -34,48 +34,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "noRTOS.h"
-#include "hardwareGlobal.h"
-
-#define uart_rx_buffer_size 512
-static uint8_t uart_IR_rx_buffer[uart_rx_buffer_size];
-static uint8_t uart_terminal_rx_buffer[uart_rx_buffer_size];
-static uint16_t buffer_head = 0;
-
-bool sml_check_for_start_sequence(uint8_t *buffer) {
-	if (	buffer[buffer_head] == 0x01 && buffer[buffer_head - 1] == 0x01 &&
-			buffer[buffer_head - 2] == 0x1B && buffer[buffer_head - 3] == 0x1B) {
-		// start sequence detected
-		return true;
-	} else {
-		return false;
-	}
-}
-
-void sml_read_char_callback(void){
-	// regular printf() does not work, it swallows chars!
-	char b[8];
-	uint8_t s = 0;
-	s = sprintf(b, "%02X ", uart_IR_rx_buffer[buffer_head]);
-	UART_SEND_TERMINAL((uint8_t*)b, s);
-
-	// check for SML-Protocol start sequence
-//	if( 	   uart_IR_rx_buffer[buffer_head] == 0x01
-//			&& uart_IR_rx_buffer[buffer_head-1] == 0x01
-//			&& uart_IR_rx_buffer[buffer_head-2] == 0x1B
-//			&& uart_IR_rx_buffer[buffer_head-3] == 0x1B){
-
-	if(sml_check_for_start_sequence(uart_IR_rx_buffer)){
-		// start sequence detected, start a new line on terminal
-		printf("\t HIT \n");
-	}
-
-	// increment pointer on char buffer
-	buffer_head++;
-	// prevent pointer from increase more than buffer length
-	buffer_head = buffer_head & 0x1FF;
-	// activate interrupt based, byte wise uart read
-	UART_IR_READ_BYTE_IRQ( &uart_IR_rx_buffer[buffer_head] );
-}
+#include "sml.h"
 
 /* USER CODE END Includes */
 
@@ -108,35 +67,12 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+// override the noRTOS init function
+// the rest of this application is done by interrupts
 void noRTOS_setup(void) {
-	UART_IR_READ_BYTE_IRQ( &uart_IR_rx_buffer[buffer_head] );
-	printf("activate UART1 in read byte mode\n");
-	UART_TERMINAL_READ_LINE_IRQ( uart_terminal_rx_buffer, uart_rx_buffer_size);
-	printf("activate UART2 in DMA read line mode\n");
-}
-
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
-
-	if (huart->Instance == UART_TERMINAL_INSTANCE){
-		__NOP();
-	}
-
-	if (huart->Instance == UART_IR_INSTANCE){
-		sml_read_char_callback();
-	}
-}
-
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size){
-
-	if (huart->Instance == UART_TERMINAL_INSTANCE){
-		printf("---- NEW LINE ---- \n");
-		UART_TERMINAL_READ_LINE_IRQ(uart_terminal_rx_buffer, uart_rx_buffer_size);
-	}
-
-	if (huart->Instance == UART_IR_INSTANCE){
-		printf("received %d byte raw data\n", Size);
-	}
+	sml_uart_terminal_bridge_setup();
+	//sml_telegram_decoder();
 }
 
 /* USER CODE END 0 */
@@ -174,6 +110,9 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+
+  noRTOS_task_t sml_main_t = { .delay = eNORTOS_PERIODE_10ms, .task_callback = sml_main };
+  noRTOS_add_task_to_scheduler(&sml_main_t);
 
   noRTOS_run_scheduler();
   /* USER CODE END 2 */
