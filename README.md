@@ -41,7 +41,7 @@ void sml_read_char_callback(void){
 		// start sequence detected, start a new line on terminal
 		printf("\t HIT \n");
 #elif defined(SML_DECODER_MODE_2)
-		sml_telegram_read_compleat = true;
+		sml_telegram_read_complete = true;
 #endif
 	}
 	// increment pointer on char buffer
@@ -65,8 +65,8 @@ noRTOS_run_scheduler();
 ```C
 void sml_main(void){
 
-	if(sml_telegram_read_compleat){
-		sml_telegram_read_compleat = false;
+	if(sml_telegram_read_complete){
+		sml_telegram_read_complete = false;
 		uint16_t hit = 0;
 
 		sml_search_byte_pattern((char*)uart_IR_rx_buffer, sizeof(uart_IR_rx_buffer), (char*)obis_code_power, sizeof(obis_code_power), &hit);
