@@ -5,7 +5,7 @@ Protocol Converter for Optical-Interface at Energie Meters, SML, Infrared transm
 This is my first approach of low budget data reader for Energie Meter with optical interface.
 
 # Requirements
-- optical interface breakout e.g. from [ebay]([https://](https://www.ebay.de/itm/285350331996?_trkparms=amclksrc%3DITM%26aid%3D1110006%26algo%3DHOMESPLICE.SIM%26ao%3D1%26asc%3D20220405142716%26meid%3Da39a4b830442481ca9af5d633cc26f19%26pid%3D101506%26rk%3D7%26rkt%3D10%26sd%3D314015558154%26itm%3D285350331996%26pmt%3D1%26noa%3D1%26pg%3D4481478%26algv%3DDefaultOrganicWebWithV11WebTrimmedV3VisualRankerWithKnnV3AndUltBRecall&_trksid=p4481478.c101506.m1851))
+- optical interface breakout e.g. from [ebay](https://www.ebay.de/itm/285350331996?_trkparms=amclksrc%3DITM%26aid%3D1110006%26algo%3DHOMESPLICE.SIM%26ao%3D1%26asc%3D20220405142716%26meid%3Da39a4b830442481ca9af5d633cc26f19%26pid%3D101506%26rk%3D7%26rkt%3D10%26sd%3D314015558154%26itm%3D285350331996%26pmt%3D1%26noa%3D1%26pg%3D4481478%26algv%3DDefaultOrganicWebWithV11WebTrimmedV3VisualRankerWithKnnV3AndUltBRecall&_trksid=p4481478.c101506.m1851)
 - microcontroller dev board, I use a STM32F446RE Nucleo
 
 # How it works
