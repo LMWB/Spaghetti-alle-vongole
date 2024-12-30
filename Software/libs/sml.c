@@ -6,7 +6,7 @@
 #include "hardwareGlobal.h"
 #include "sml.h"
 
-#define SML_DECODER_MODE_1
+//#define SML_DECODER_MODE_1
 #define SML_DECODER_MODE_2
 
 #define uart_rx_buffer_size 512							// for hole sml-telegram to small, must be around 560 Bytes in total
@@ -184,6 +184,7 @@ void sml_main(void){
 		uint16_t hit = 0;
 
 		sml_search_byte_pattern((char*)uart_IR_rx_buffer, sizeof(uart_IR_rx_buffer), (char*)obis_code_power, sizeof(obis_code_power), &hit);
+		// in case power consuption is less than 128W, The SML-Telegram will only transmit 1Byte, hence this hard coded approach fails!
 		int32_t power = (uart_IR_rx_buffer[hit+15] << 8 )| uart_IR_rx_buffer[hit+16];
 
 		sml_search_byte_pattern((char*)uart_IR_rx_buffer, sizeof(uart_IR_rx_buffer), (char*)obis_code_energieP, sizeof(obis_code_energieP), &hit);
