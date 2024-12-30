@@ -22,7 +22,76 @@ You could record these lines and analyze them "offline".
 It seems that each Energie Meter somehow transmit more or less data in its own order. 
 They all talk SML-Protocol but they do in various quantity.  
 
+```C
+// override the noRTOS init function
+// the rest of this application is done by interrupts
+void noRTOS_setup(void) {
+	sml_uart_terminal_bridge_setup();
+}
+```
+The uart interrupt callback looks like this   
+```C
+void sml_read_char_callback(void){
+#ifdef SML_DECODER_MODE_1
+	sml_print_bytes_on_terminal();
+#endif
+
+	if(sml_check_for_start_sequence(uart_IR_rx_buffer)){
+		// start sequence detected, start a new line on terminal
+#ifdef SML_DECODER_MODE_1
+		printf("\t HIT \n");
+#endif
+
+#ifdef SML_DECODER_MODE_2
+		sml_telegram_read_compleat = true;
+#endif
+	}
+	// increment pointer on char buffer
+	ir_buffer_head++;
+	// prevent pointer from increase more than buffer length
+	ir_buffer_head = ir_buffer_head & 0x1FF;
+	// activate interrupt based, byte wise uart read
+	UART_IR_READ_BYTE_IRQ( &uart_IR_rx_buffer[ir_buffer_head] );
+}
+```
+
 2nd mode decodes "online" and prints the results of OBIS-Code 1.8.0, 2.8.0 and 16.7.0.  
+
+```C
+noRTOS_task_t sml_main_t = { .delay = eNORTOS_PERIODE_10ms, .task_callback = sml_main };
+noRTOS_add_task_to_scheduler(&sml_main_t);
+noRTOS_run_scheduler();
+// never get here !
+```
+
+```C
+void sml_main(void){
+
+	if(sml_telegram_read_compleat){
+		sml_telegram_read_compleat = false;
+		uint16_t hit = 0;
+
+		sml_search_byte_pattern((char*)uart_IR_rx_buffer, sizeof(uart_IR_rx_buffer), (char*)obis_code_power, sizeof(obis_code_power), &hit);
+        int32_t power = (uart_IR_rx_buffer[hit+15] << 8 )| uart_IR_rx_buffer[hit+16];
+
+		sml_search_byte_pattern((char*)uart_IR_rx_buffer, sizeof(uart_IR_rx_buffer), (char*)obis_code_energieP, sizeof(obis_code_energieP), &hit);
+		int32_t energieP = (uart_IR_rx_buffer[hit+25] << 24 ) | (uart_IR_rx_buffer[hit+26] << 16) | (uart_IR_rx_buffer[hit+27] << 8) | uart_IR_rx_buffer[hit+28];
+
+		sml_search_byte_pattern((char*)uart_IR_rx_buffer, sizeof(uart_IR_rx_buffer), (char*)obis_code_energieN, sizeof(obis_code_energieN), &hit);
+		int32_t energieN = (uart_IR_rx_buffer[hit+22] << 16) | (uart_IR_rx_buffer[hit+23] << 8) | uart_IR_rx_buffer[hit+24];
+
+		printf("\n\n1.8.0: %ldWh\t2.8.0: %ldWh\t 16.7.0: %ldW\n", energieP/10, energieN/10, power);
+	}
+}
+```
+
+with OBIS 'key-words' being
+
+```C
+static uint8_t obis_code_power[] =      {0x77, 0x07, 0x01, 0x00, 0x10, 0x07, 0x00, 0xFF,};
+static uint8_t obis_code_energieP[] =   {0x77, 0x07, 0x01, 0x00, 0x01, 0x08, 0x00, 0xFF,};
+static uint8_t obis_code_energieN[] =   {0x77, 0x07, 0x01, 0x00, 0x02, 0x08, 0x00, 0xFF,};
+```
 
 # todo
 - build a small battery driven custom PCB with IR receiver, small MCU, CAN / Modbus and SD card 

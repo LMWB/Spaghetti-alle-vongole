@@ -72,7 +72,6 @@ void SystemClock_Config(void);
 // the rest of this application is done by interrupts
 void noRTOS_setup(void) {
 	sml_uart_terminal_bridge_setup();
-	//sml_telegram_decoder();
 }
 
 /* USER CODE END 0 */
@@ -113,8 +112,9 @@ int main(void)
 
   noRTOS_task_t sml_main_t = { .delay = eNORTOS_PERIODE_10ms, .task_callback = sml_main };
   noRTOS_add_task_to_scheduler(&sml_main_t);
-
   noRTOS_run_scheduler();
+  // never get here !
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
