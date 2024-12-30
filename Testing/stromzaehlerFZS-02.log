@@ -1,5 +1,5 @@
 P = 1950 W
-check if length of OBIS Code value has changed to mor than 2 Bytes
+check if length of OBIS Code value has changed to more than 2 Bytes
 -> no has not 
 here is the frame: '77 07 01 00 10 07 00 FF 01 01 62 1B 52 00 53 07 85 01'
 and here is the value   53 07 85 (hex), where as 0x0785 = 1925W

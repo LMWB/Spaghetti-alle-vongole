@@ -14,7 +14,7 @@ P = 257W
             01                                                          #codepage: ohne Wert
             07 FF FF FF FF FF FF                                        #clientId: ohne Wert
             05 06 39 55 BF                                              #reqFileId:
-            0B 0A 01 45 46 52 20 02 CF 95 E0                            #serverID: (0b(HEX)=11Bytes Länge)
+            XX XX XX XX XX XX XX XX XX XX XX                            #serverID: (0b(HEX)=11Bytes Länge)
             72 
                 62 01 
                 65 06 39 55 80 
@@ -29,7 +29,7 @@ P = 257W
         63 07 01 
         77 
             07 FF FF FF FF FF FF 
-            0B 0A 01 45 46 52 20 02 CF 95 E0 
+            XX XX XX XX XX XX XX XX XX XX XX  
             07 01 00 62 0A FF FF 
             72 
                 62 01 
