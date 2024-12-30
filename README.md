@@ -91,7 +91,7 @@ static uint8_t obis_code_energieP[] =   {0x77, 0x07, 0x01, 0x00, 0x01, 0x08, 0x0
 static uint8_t obis_code_energieN[] =   {0x77, 0x07, 0x01, 0x00, 0x02, 0x08, 0x00, 0xFF,};
 ```
 
-Output of mode 2 in terminal will look like this
+Output of mode 2 in terminal will look like this (first line fails due to incomplete sml-byte stream)
 ![sml-decoder output](./Testing/sml-decoder-output.png)
 
 # todo
