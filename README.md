@@ -32,17 +32,15 @@ void noRTOS_setup(void) {
 The uart interrupt callback looks like this   
 ```C
 void sml_read_char_callback(void){
-#ifdef SML_DECODER_MODE_1
+#if defined(SML_DECODER_MODE_1)
 	sml_print_bytes_on_terminal();
 #endif
 
 	if(sml_check_for_start_sequence(uart_IR_rx_buffer)){
+#if defined(SML_DECODER_MODE_1)
 		// start sequence detected, start a new line on terminal
-#ifdef SML_DECODER_MODE_1
 		printf("\t HIT \n");
-#endif
-
-#ifdef SML_DECODER_MODE_2
+#elif defined(SML_DECODER_MODE_2)
 		sml_telegram_read_compleat = true;
 #endif
 	}
@@ -72,7 +70,7 @@ void sml_main(void){
 		uint16_t hit = 0;
 
 		sml_search_byte_pattern((char*)uart_IR_rx_buffer, sizeof(uart_IR_rx_buffer), (char*)obis_code_power, sizeof(obis_code_power), &hit);
-        int32_t power = (uart_IR_rx_buffer[hit+15] << 8 )| uart_IR_rx_buffer[hit+16];
+		int32_t power = (uart_IR_rx_buffer[hit+15] << 8 )| uart_IR_rx_buffer[hit+16];
 
 		sml_search_byte_pattern((char*)uart_IR_rx_buffer, sizeof(uart_IR_rx_buffer), (char*)obis_code_energieP, sizeof(obis_code_energieP), &hit);
 		int32_t energieP = (uart_IR_rx_buffer[hit+25] << 24 ) | (uart_IR_rx_buffer[hit+26] << 16) | (uart_IR_rx_buffer[hit+27] << 8) | uart_IR_rx_buffer[hit+28];
